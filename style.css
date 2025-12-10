@@ -1,0 +1,1082 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Italianno&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
+  
+  body {
+    background-color: #fff;
+    color: #111;
+    overflow-x: hidden;
+  }
+  
+ 
+  
+  /*MAIN NAVBAR*/
+  .main-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .logo {
+    font-family: "Abril Fatface", serif;
+    font-size: 2rem;
+    font-style: italic;
+    font-weight: 500;
+    text-decoration: none;
+    color: #111;
+  }
+  
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    font-size: 19px;
+  }
+  
+  .nav-icons i {
+    cursor: pointer !important;
+    transition: opacity 0.3s ease;
+ }
+
+  
+  .nav-icons i:hover {
+    color: rgb(225, 203, 75);
+    opacity: 0.6;
+  }
+  
+  /* LOWER NAV LINKS */
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    padding: 0.8rem 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #111;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    position: relative;
+  }
+  
+  .nav-links a:hover{
+    text-decoration: underline;
+  }
+  /* ===== HAMBURGER ===== */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  
+  .hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: #111;
+    margin: 4px 0;
+    transition: all 0.3s ease;
+  }
+  
+  .hamburger.open div:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  
+  .hamburger.open div:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger.open div:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+  
+
+  /*==== SEARCH BAR ====*/
+
+  
+  /* === Slide show ===*/
+
+  .slideshow{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.4); /* darken image */
+    z-index: 1; /* behind text */
+    
+  }
+  
+  .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* adding a dark filter for text to be visible */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6); 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2; 
+    pointer-events: none;
+  }
+  
+  /* Text in the middle */
+  .text-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    z-index: 5; 
+  pointer-events: auto; 
+  }
+  
+  .text-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: "Abril Fatface", serif;
+    font-style: italic;
+  }
+  
+
+  .cta-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    background-color: #111;
+    color: #fff;
+    text-decoration: none; /* removes underline */
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-btn:hover {
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #111;
+  }
+  
+  
+  
+  /* Dots navigation */
+  .dots {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .dot {
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    margin: 0 6px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dot.active {
+    background-color: #fff;
+  }
+  
+  /* Animation control */
+  .slide.active {
+    opacity: 1;
+    z-index: 3;
+  }
+  .slide:first-child {
+    opacity: 1;
+    z-index: 3;
+  }
+  
+  .featured-product{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px
+  }
+
+  .productinfo {
+    display: flex;
+    flex-direction: column;  
+    align-items: center;     
+    justify-content: center; 
+    gap: 1.5rem;             
+    text-align: center;      
+    height: auto;           
+    padding: 2rem;          
+  }
+  
+  .productinfo h1 {
+    font-size: 2.3rem;
+    letter-spacing: 0.4px;
+    font-family: "Abril Fatface", serif;
+    font-weight: 700;
+  }
+  
+  .productinfo p {
+    max-width: 500px;       
+    line-height: 1.4;
+  }
+  
+  .productinfo button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    border: none;
+    background-color: #111;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .productinfo button:hover {
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #111;
+  }
+
+  .productimg img{
+    width: 100%;
+    height: 100%;
+    object-fit:contain;
+    
+  }
+
+  .productimg{
+    width: 100%;
+    max-width: 500px;
+  }
+  .jewelry_categories_heading{
+    padding: 3rem;
+    font-family: "Abril Fatface", serif;
+    font-weight: 400;  
+    font-style: italic;
+  }
+  
+  .jewelry_categories{
+     display: flex;
+     flex-wrap: wrap;
+     flex-direction: row;
+     gap: 2rem;
+     align-items: center;
+     justify-content: center;
+     margin-bottom: 4rem;
+  }
+
+  .category{
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;           
+    width: 270px;                 
+    aspect-ratio: 1 / 1;          
+    cursor: pointer;
+  }
+
+  .category img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;           
+    display: block;
+    transition: all 0.25s ease;
+  }
+  .overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 1.3rem;
+    font-weight: 520;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    text-transform: uppercase;
+    text-align: center;
+    z-index: 2;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+  
+  
+  .category:hover img {
+    transform: scale(1.05); 
+    filter: brightness(76%);
+  }
+  
+  .category:hover::after {
+    background: rgba(0, 0, 0, 0.5); /* dark overlay */
+  }
+  
+  .category:hover .overlay-text {
+    opacity: 1; /* text fades in */
+  }
+  
+
+  .slide2 {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .slide2 img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  
+  .slide2 img.active {
+    opacity: 1;
+    z-index: 1;
+  }
+  
+   .card_3product{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-around;
+   }
+
+   .card_3product img{
+    object-fit: cover;           
+    display: block;
+    width: 230px;                 
+    aspect-ratio: 1 / 1; 
+   }
+
+   .card_3product_h1, .collapsible_h1, .aboutus_heading, .craftmanship_h1{
+    padding: 3rem;
+    font-family: "Abril Fatface", serif;
+    font-weight: 600;  
+    font-style: italic;
+    justify-content: center;
+    text-align: center;
+    margin-top: 0.2rem;
+   }
+
+   .collapsible {
+    color: rgb(9, 9, 9);
+    cursor: pointer;
+    padding: 1.6rem;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.4rem;
+    font-family: "Abril Fatface", serif;
+    font-weight: 400; 
+    font-style: italic;
+    border-bottom: 1px solid #99999997;
+    border-top: 1px solid #99999997;
+    background-color: transparent;
+
+    
+  }
+  .collapsible_content{
+    width: 80%;
+    margin: 2rem auto;
+  }
+  
+  .active, .collapsible:hover {
+    background-color: #e8e6e67b;
+    border: none;
+  
+  }
+
+  
+  .content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    font-family: "Poppins", serif;
+    padding: 1.4rem;
+    line-height: 1.4;
+  }
+  
+  .intro, .craftmanship_p{
+    font-size: 1.2rem;
+    color: #444;
+    max-width: 700px;
+    margin: 0 auto 4rem auto;
+    line-height: 1.6;
+  }
+  .ourstory_img1, .ourstory_img2{
+    width: 100%;
+    height: 30%;
+    margin: 0 auto; 
+    display: block;
+  }
+
+  /* ==== CONTACT FORM ====*/
+  .contact-section {
+    max-width: 700px;
+    margin: 5rem auto;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .contact-section h2 {
+    font-family: "Abril Fatface", serif;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+  }
+  
+  .contact-section p {
+    color: #444;
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+  
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #222;
+  }
+  
+  input,
+  textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background-color: #fdfdfd;
+  }
+  
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #111;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .formsubmit {
+    background-color: #111;
+    color: #fff;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 550;
+    font-size: 1rem;
+    cursor: pointer;
+    align-self: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  button:hover {
+    background-color: #fff;
+    color: #111;
+    border: 1px solid #111;
+  }
+  
+  .feedback {
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+
+  .success {
+    color: green;
+  }
+
+  .error {
+    color: red;
+  }
+
+  /* ==== ALL PRODUCTS PAGE ====*/
+
+  /* Container for all products */
+
+.products-container {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  justify-items: center;
+  align-items: start;
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 260px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.product-image img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+
+/* Hover effect */
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+.product-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+/* Info section */
+.product-info {
+  text-align: center;
+  padding: 1rem;
+}
+.product-info h3 {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: 0.3rem;
+  font-family: "Abril Fatface", serif;
+  font-style: italic;
+}
+
+
+.product-info .price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.6rem;
+}
+
+/* Button styling */
+.shop-btn {
+  background-color: #111;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  margin-bottom: 5px;
+  border-radius: 2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none  !important;
+}
+
+.shop-btn:hover {
+  background-color: #fff;
+  color: #111;
+  border: 1px solid #111;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1100px) {
+  .products-container { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 800px) {
+  .products-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .products-container { grid-template-columns: 1fr; }
+}
+
+
+
+/* ==== ADMIN DASHBOARD ====*/
+
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .main-navbar {
+      justify-content: space-between;
+      padding: 1rem;
+    }
+  
+    .logo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  
+    .hamburger {
+      display: flex;
+    }
+  
+    .nav-icons {
+      display: flex;
+    }
+  
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px; 
+      left: 10px;
+      width: 100%;
+      background: #fff;
+      padding: 10px;
+      gap: 1rem;
+      z-index: 999;
+      text-decoration: none;
+      margin-left: -10px;
+     
+    }
+  
+    .nav-links.active {
+      display: flex;
+      position: fixed;
+    }
+
+    .nav-links a:hover::after {
+        text-decoration: none !important;
+    }
+    
+  
+    .hamburger.open div:nth-child(1) {
+      transform: rotate(45deg) translate(6px, 8px);
+    }
+    .hamburger.open div:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open div:nth-child(3) {
+      transform: rotate(-45deg) translate(6px, -10px);
+    }
+    .featured-product {
+        flex-direction: column; 
+        text-align: center;
+      }
+    
+      .productimg {
+        max-width: 100%;  
+      }
+    
+      .productinfo {
+        height: auto;    
+        padding: 1.5rem;
+      }
+    
+      .productinfo h1 {
+        font-size: 1.8rem; 
+      }
+    
+      .productinfo p {
+        max-width: 90%;
+        font-size: 0.95rem;
+      }
+
+    .jewelry_categories{
+        flex-direction: column;
+    }
+  }
+  
+    
+    @media (min-width: 901px) {
+      .hamburger {
+        display: none;
+      }
+    }
+    
+ /*FOOTER*/
+.site-footer {
+  background: #111;
+  color: #ddd;
+  padding: 3rem 2rem;
+  font-size: 14px;
+  margin-top: 3rem;
+}
+
+.footer-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2.5rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.footer-section h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #fff;
+  font-family: "Abril Fatface", serif;
+  font-style: italic;
+    
+}
+
+.footer-section p {
+  margin: 0.3rem 0;
+  line-height: 1.5;
+}
+
+.footer-section ul {
+  padding: 0;
+  list-style: none;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section ul li a {
+  color: #ddd;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: rgb(225, 203, 75);
+}
+
+.footer-section a {
+  color: rgb(225, 203, 75);
+  text-decoration: underline;
+}
+.footer-social a {
+  display: inline-block;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  background: #222;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  color: #ddd;
+  transition: background 0.3s, color 0.3s;
+}
+
+.footer-social a:hover {
+  background: rgb(225, 203, 75);
+  color: #111;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #222;
+  margin-top: 2rem;
+}
+
+/*COOKIE BANNER*/
+#cookieBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  padding: 1.5rem 2rem;
+  z-index: 10000;
+  transform: translateY(100%);
+  transition: transform 0.4s ease;
+}
+
+#cookieBanner.show {
+  transform: translateY(0);
+}
+
+.cookie-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cookie-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.cookie-text h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: "Abril Fatface", serif;
+  font-style: italic;
+}
+
+.cookie-text p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.cookie-text a {
+  color: #111;
+  text-decoration: underline;
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cookie-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.btn-accept-all {
+  background: #111;
+  color: white;
+}
+
+.btn-accept-all:hover {
+  background: white;
+  color: black;
+  border: 1px solid black;
+}
+
+.btn-necessary {
+  background: #f5f5f5;
+  color: #111;
+}
+
+.btn-necessary:hover {
+  background: #e0e0e0;
+}
+
+.btn-settings {
+  background: transparent;
+  color: #666;
+  text-decoration: underline;
+  padding: 0.8rem;
+}
+
+/* Cookie Settings Modal */
+#cookieModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 10001;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+#cookieModal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #eee;
+  
+}
+
+.modal-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 28px;
+  font-family: "Abril Fatface", serif;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.cookie-category {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.category-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+input:disabled + .slider {
+  background-color: #111;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.category-description {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: 1rem 2rem 2rem 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+
+
+@media (max-width: 768px) {
+  .cookie-content {
+      flex-direction: column;
+      align-items: stretch;
+  }
+
+  .cookie-actions {
+      justify-content: stretch;
+  }
+
+  .cookie-btn {
+      flex: 1;
+  }
+
+  #cookieBanner {
+      padding: 1rem;
+  }
+}

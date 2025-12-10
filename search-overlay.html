@@ -1,0 +1,705 @@
+<!-- Search Overlay -->
+<div class="search-overlay" id="search-overlay">
+    <div class="search-container">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search for products, categories, or pages..."
+                autocomplete="off">
+            <i class="fas fa-times" id="close-search"></i>
+        </div>
+        <div class="search-results" id="search-results"></div>
+    </div>
+</div>
+
+<style>
+    /* Search Overlay Styles */
+    .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(94, 91, 91, 0.34);
+        z-index: 9999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .search-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 80px auto;
+        padding: 0 2rem;
+    }
+
+    .search-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    #search-input {
+        flex: 1;
+        padding: 1.2rem 1.5rem;
+        font-size: 18px;
+        border: none;
+        border-radius: 50px;
+        background: white;
+        color: #333;
+    }
+
+    #search-input:focus {
+        outline: none;
+    }
+
+    #close-search {
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    #close-search:hover {
+        transform: rotate(90deg);
+    }
+
+    .search-results {
+        background: white;
+        border-radius: 12px;
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .search-category {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-category-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 0.8rem;
+        padding: 0 0.5rem;
+    }
+
+    .search-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .search-item:hover {
+        background: #f5f5f5;
+    }
+
+    .search-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #f0f0f0;
+    }
+
+    .search-item-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+        border-radius: 6px;
+        font-size: 24px;
+        color: #666;
+    }
+
+    .search-item-info {
+        flex: 1;
+    }
+
+    .search-item-name {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .search-item-details {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .no-results i {
+        font-size: 48px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .search-loading {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .search-loading i {
+        font-size: 32px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            margin: 40px auto;
+            padding: 0 1rem;
+        }
+
+        #search-input {
+            font-size: 16px;
+            padding: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Global search functionality - works on all pages
+    (function () {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSearch);
+        } else {
+            initSearch();
+        }
+
+        function initSearch() {
+            // Get elements
+            const searchIcon = document.getElementById('search-icon');
+            const searchOverlay = document.getElementById('search-overlay');
+            const closeSearch = document.getElementById('close-search');
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+
+            if (!searchIcon || !searchOverlay) return;
+
+            // Open search overlay
+            searchIcon.addEventListener('click', function () {
+                searchOverlay.classList.add('active');
+                searchInput.focus();
+            });
+
+            // Close search overlay
+            closeSearch.addEventListener('click', function () {
+                searchOverlay.classList.remove('active');
+                searchInput.value = '';
+                searchResults.innerHTML = '';
+            });
+
+            // Close search on Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
+                    searchOverlay.classList.remove('active');
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                }
+            });
+
+            // Close search when clicking outside
+            searchOverlay.addEventListener('click', function (e) {
+                if (e.target === searchOverlay) {
+                    searchOverlay.classList.remove('active');
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                }
+            });
+
+            // Search input with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                if (query.length === 0) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                searchTimeout = setTimeout(function () {
+                    performSearch(query);
+                }, 300);
+            });
+
+            function performSearch(query) {
+                searchResults.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i><p>Searching...</p></div>';
+
+                fetch('search.php?q=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data, query);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        searchResults.innerHTML = '<div class="no-results"><i class="fas fa-exclamation-triangle"></i><p>Error performing search</p></div>';
+                    });
+            }
+
+            function displaySearchResults(data, query) {
+                let html = '';
+                let hasResults = false;
+
+                // Display Products
+                if (data.products && data.products.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Products</div>';
+                    data.products.forEach(function (product) {
+                        const imageSrc = product.image ? escapeHtml(product.image) : 'placeholder.jpg';
+                        html += '<a href="product.php?id=' + product.id + '" class="search-item">';
+                        html += '<img src="' + imageSrc + '" alt="' + escapeHtml(product.name) + '" class="search-item-image">';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(product.name) + '</div>';
+                        html += '<div class="search-item-details">' + escapeHtml(product.category) + ' • £' + parseFloat(product.price).toFixed(2) + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                // Display Categories
+                if (data.categories && data.categories.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Categories</div>';
+                    data.categories.forEach(function (category) {
+                        const categoryUrl = getCategoryUrl(category.category);
+                        html += '<a href="' + categoryUrl + '" class="search-item">';
+                        html += '<div class="search-item-icon"><i class="fas fa-tag"></i></div>';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(category.category) + '</div>';
+                        html += '<div class="search-item-details">' + category.count + ' product' + (category.count !== 1 ? 's' : '') + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                // Display Pages
+                if (data.pages && data.pages.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Pages</div>';
+                    data.pages.forEach(function (page) {
+                        html += '<a href="' + escapeHtml(page.url) + '" class="search-item">';
+                        html += '<div class="search-item-icon"><i class="' + escapeHtml(page.icon) + '"></i></div>';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(page.title) + '</div>';
+                        html += '<div class="search-item-details">' + escapeHtml(page.description) + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                if (!hasResults) {
+                    html = '<div class="no-results">';
+                    html += '<i class="fas fa-search"></i>';
+                    html += '<p>No results found for "' + escapeHtml(query) + '"</p>';
+                    html += '</div>';
+                }
+
+                searchResults.innerHTML = html;
+            }
+
+            function getCategoryUrl(category) {
+                const categoryMap = {
+                    'Bracelets': 'bracelets.html',
+                    'Necklaces': 'necklaces.html',
+                    'Rings': 'rings.html',
+                    'Earrings': 'earrings.html'
+                };
+                return categoryMap[category] || 'allproducts.php?category=' + encodeURIComponent(category);
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+    })();
+</script><!-- Search Overlay - Add this right after your opening <body> tag on EVERY page -->
+<div class="search-overlay" id="search-overlay">
+    <div class="search-container">
+        <div class="search-header">
+            <input type="text" id="search-input" placeholder="Search for products, categories, or pages..."
+                autocomplete="off">
+            <i class="fas fa-times" id="close-search"></i>
+        </div>
+        <div class="search-results" id="search-results"></div>
+    </div>
+</div>
+
+<style>
+    /* Search Overlay Styles */
+    .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .search-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+    .search-container {
+        max-width: 800px;
+        margin: 80px auto;
+        padding: 0 2rem;
+    }
+
+    .search-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    #search-input {
+        flex: 1;
+        padding: 1.2rem 1.5rem;
+        font-size: 18px;
+        border: none;
+        border-radius: 50px;
+        background: white;
+        color: #333;
+    }
+
+    #search-input:focus {
+        outline: none;
+    }
+
+    #close-search {
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    #close-search:hover {
+        transform: rotate(90deg);
+    }
+
+    .search-results {
+        background: white;
+        border-radius: 12px;
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .search-category {
+        margin-bottom: 1.5rem;
+    }
+
+    .search-category-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #999;
+        margin-bottom: 0.8rem;
+        padding: 0 0.5rem;
+    }
+
+    .search-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+        text-decoration: none;
+        color: #333;
+    }
+
+    .search-item:hover {
+        background: #f5f5f5;
+    }
+
+    .search-item-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #f0f0f0;
+    }
+
+    .search-item-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+        border-radius: 6px;
+        font-size: 24px;
+        color: #666;
+    }
+
+    .search-item-info {
+        flex: 1;
+    }
+
+    .search-item-name {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .search-item-details {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .no-results i {
+        font-size: 48px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .search-loading {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .search-loading i {
+        font-size: 32px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .search-container {
+            margin: 40px auto;
+            padding: 0 1rem;
+        }
+
+        #search-input {
+            font-size: 16px;
+            padding: 1rem;
+        }
+    }
+</style>
+
+<script>
+    // Global search functionality - works on all pages
+    (function () {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSearch);
+        } else {
+            initSearch();
+        }
+
+        function initSearch() {
+            // Get elements
+            const searchIcon = document.getElementById('search-icon');
+            const searchOverlay = document.getElementById('search-overlay');
+            const closeSearch = document.getElementById('close-search');
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
+
+            if (!searchIcon || !searchOverlay) return;
+
+            // Open search overlay
+            searchIcon.addEventListener('click', function () {
+                searchOverlay.classList.add('active');
+                searchInput.focus();
+            });
+
+            // Close search overlay
+            closeSearch.addEventListener('click', function () {
+                searchOverlay.classList.remove('active');
+                searchInput.value = '';
+                searchResults.innerHTML = '';
+            });
+
+            // Close search on Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
+                    searchOverlay.classList.remove('active');
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                }
+            });
+
+            // Close search when clicking outside
+            searchOverlay.addEventListener('click', function (e) {
+                if (e.target === searchOverlay) {
+                    searchOverlay.classList.remove('active');
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                }
+            });
+
+            // Search input with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', function () {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                if (query.length === 0) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                searchTimeout = setTimeout(function () {
+                    performSearch(query);
+                }, 300);
+            });
+
+            function performSearch(query) {
+                searchResults.innerHTML = '<div class="search-loading"><i class="fas fa-spinner"></i><p>Searching...</p></div>';
+
+                fetch('search.php?q=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data, query);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        searchResults.innerHTML = '<div class="no-results"><i class="fas fa-exclamation-triangle"></i><p>Error performing search</p></div>';
+                    });
+            }
+
+            function displaySearchResults(data, query) {
+                let html = '';
+                let hasResults = false;
+
+                // Display Products
+                if (data.products && data.products.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Products</div>';
+                    data.products.forEach(function (product) {
+                        const imageSrc = product.image ? escapeHtml(product.image) : 'placeholder.jpg';
+                        html += '<a href="product.php?id=' + product.id + '" class="search-item">';
+                        html += '<img src="' + imageSrc + '" alt="' + escapeHtml(product.name) + '" class="search-item-image">';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(product.name) + '</div>';
+                        html += '<div class="search-item-details">' + escapeHtml(product.category) + ' • £' + parseFloat(product.price).toFixed(2) + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                // Display Categories
+                if (data.categories && data.categories.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Categories</div>';
+                    data.categories.forEach(function (category) {
+                        const categoryUrl = getCategoryUrl(category.category);
+                        html += '<a href="' + categoryUrl + '" class="search-item">';
+                        html += '<div class="search-item-icon"><i class="fas fa-tag"></i></div>';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(category.category) + '</div>';
+                        html += '<div class="search-item-details">' + category.count + ' product' + (category.count !== 1 ? 's' : '') + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                // Display Pages
+                if (data.pages && data.pages.length > 0) {
+                    hasResults = true;
+                    html += '<div class="search-category">';
+                    html += '<div class="search-category-title">Pages</div>';
+                    data.pages.forEach(function (page) {
+                        html += '<a href="' + escapeHtml(page.url) + '" class="search-item">';
+                        html += '<div class="search-item-icon"><i class="' + escapeHtml(page.icon) + '"></i></div>';
+                        html += '<div class="search-item-info">';
+                        html += '<div class="search-item-name">' + escapeHtml(page.title) + '</div>';
+                        html += '<div class="search-item-details">' + escapeHtml(page.description) + '</div>';
+                        html += '</div>';
+                        html += '</a>';
+                    });
+                    html += '</div>';
+                }
+
+                if (!hasResults) {
+                    html = '<div class="no-results">';
+                    html += '<i class="fas fa-search"></i>';
+                    html += '<p>No results found for "' + escapeHtml(query) + '"</p>';
+                    html += '</div>';
+                }
+
+                searchResults.innerHTML = html;
+            }
+
+            function getCategoryUrl(category) {
+                const categoryMap = {
+                    'Bracelets': 'bracelets.php',
+                    'Necklaces': 'necklaces.php',
+                    'Rings': 'rings.php',
+                    'Earrings': 'earrings.php'
+                };
+                return categoryMap[category] || 'allproducts.php?category=' + encodeURIComponent(category);
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+    })();
+</script>
